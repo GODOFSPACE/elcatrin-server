@@ -57,8 +57,8 @@ class Sockets {
             });
 
             //Tu JUEGO A JUICIO
-            socket.on('mandar-juicio', async({examinar, revisando }) => {
-                await socket.to(sala).emit('vender-mercancias', {examinar, revisando});
+            socket.on('mandar-juicio', async({examinar, revisando, pago }) => {
+                await socket.to(sala).emit('vender-mercancias', {examinar, revisando, pago});
             });
 
             socket.on('siguiente-ronda', async (party) => {
