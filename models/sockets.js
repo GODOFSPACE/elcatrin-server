@@ -52,8 +52,8 @@ class Sockets {
             });
 
             //Recibir soborno
-            socket.on('mandar-soborno', async (soborno) => {
-                await socket.to(sala).emit('recibir-sobrno', soborno);
+            socket.on('mandar-soborno', async ({soborno, sheriff}) => {
+                await socket.to(sala).emit('recibir-sobrno', { soborno, sheriff});
             });
 
             //Tu JUEGO A JUICIO
