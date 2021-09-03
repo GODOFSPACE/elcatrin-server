@@ -17,7 +17,7 @@ class Sockets {
             console.log('Cliente Conectado')
 
             const sala = socket.handshake.query['sala'];
-            const jugadorId = ocket.handshake.query['jugadorId'];
+            const jugadorId = socket.handshake.query['jugadorId'];
             
             //Unir al usuario a una sala de socket.io
             socket.join( sala );
