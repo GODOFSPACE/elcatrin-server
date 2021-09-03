@@ -17,6 +17,7 @@ class Sockets {
             console.log('Cliente Conectado')
 
             const sala = socket.handshake.query['sala'];
+            const jugadorId = ocket.handshake.query['jugadorId'];
             
             //Unir al usuario a una sala de socket.io
             socket.join( sala );
@@ -65,14 +66,10 @@ class Sockets {
             socket.on('siguiente-ronda', async (party) => {
                 await socket.to(sala).emit('pasar-ronda', party);
             });
-
-            //Desconecta al jugador
-            socket.on('desconectar-jugador', async (jugador) => {
-                await socket.to(sala).emit('eliminar-jugador', jugador);
-            });
  
             //Disconnect
             socket.on('disconnect', async() => {
+                socket.to(sala).emit('eliminar-jugador', jugadorId);
                 console.log('Cliente Desconectado');
             });
         });
