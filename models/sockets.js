@@ -61,9 +61,15 @@ class Sockets {
                 await socket.to(sala).emit('vender-mercancias', {examinar, revisando, pago});
             });
 
+            //Inicia otra ronda
             socket.on('siguiente-ronda', async (party) => {
                 await socket.to(sala).emit('pasar-ronda', party);
-            })
+            });
+
+            //Desconecta al jugador
+            socket.on('desconectar-jugador', async (jugador) => {
+                await socket.to(sala).emit('eliminar-jugador', jugador);
+            });
  
             //Disconnect
             socket.on('disconnect', async() => {
