@@ -15,7 +15,6 @@ class Sockets {
         this.io.on('connection', async( socket ) => {
 
             console.log('Cliente Conectado')
-
             const sala = socket.handshake.query['sala'];
             const jugadorId = socket.handshake.query['jugadorId'];
             
@@ -65,6 +64,11 @@ class Sockets {
             //Inicia otra ronda
             socket.on('siguiente-ronda', async (party) => {
                 await socket.to(sala).emit('pasar-ronda', party);
+            });
+
+            //Recargar usuario
+            socket.on('recargar-usuario', async (player) => {
+                await socket.to(sala).emit('mandar-recarga', player);
             });
  
             //Disconnect
