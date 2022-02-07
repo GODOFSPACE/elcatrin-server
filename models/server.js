@@ -6,12 +6,16 @@ const path     = require('path');
 const cors     = require('cors');
 
 const Sockets = require('./sockets');
+const conectarBD = require('../config/db');
 
 class Server {
     constructor(){
 
         this.app = express();
         this.port = process.env.PORT;
+
+        // Conectar a la DB
+        conectarBD();
 
         //Http server
         this.server = http.createServer(this.app);
