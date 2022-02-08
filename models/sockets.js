@@ -84,9 +84,9 @@ class Sockets {
             });
 
             //Revisar soborno
-            socket.on('revisar-soborno', async({catrinID, dineroCatrin, mercader, soborno}) => {                
+            socket.on('revisar-soborno', async({catrinID, dineroCatrin, mercader, soborno}) => {  
                 await Vender(catrinID, dineroCatrin, mercader, true);
-                await Sobornar(catrinID, dineroCatrin, soborno);
+                await Sobornar(catrinID, soborno);
                 socket.to(sala).emit('revisar-fase');
                 socket.emit('revisar-fase');
             });
