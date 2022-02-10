@@ -11,6 +11,8 @@ const crearJugador = async(sala, nombre) => {
     const Reconectar = await Jugador.findOne({sala: sala, nombre: nombre});
     if (!Reconectar){
         let aux  = await Sala.findById(sala);
+        if(aux.inicio)
+            return nombre;       
         const jugador = new Jugador();
         jugador.nombre = nombre;
         jugador.cartas = CartaAleatoria(6);
@@ -79,7 +81,7 @@ const Vender = async(IdCatrin, dineroCatrin, mercader, revisar) => {
         if(mercader.cartas[i].selector === true)
             mercader.cartas[i] = await CartaAleatoria(1)[0];
     }
-    if(aux.catrin>0)
+    if(aux.catrin!==0)
         await Jugador.findByIdAndUpdate(IdCatrin, {dinero: dineroCatrin+aux.catrin});
     await Jugador.findByIdAndUpdate(mercader._id, {dinero: mercader.dinero+aux.jugador,cartas: mercader.cartas, ventas: aux.ventas});
 }

@@ -38,7 +38,7 @@ const aumentarVend = async(Id) => {
 
 const decVend = async(Id) => {
     let consulta = await Sala.findById(Id);
-    await Sala.findByIdAndUpdate(Id, {numVende:--consulta.numVende});
+    await Sala.findByIdAndUpdate(Id, {numVende: --consulta.numVende});
     return consulta.numVende;
 }
 

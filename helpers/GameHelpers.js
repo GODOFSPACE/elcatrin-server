@@ -58,7 +58,7 @@ const RevisarMerc=(mercader)=>{
 
 const SaltarMerc = (mercader) => {
     const cartas = mercader.cartas.filter(carta => carta.selector);
-    let Revision = {jugador:0, catrin: 0, ventas: mercader.ventas};
+    let Revision = {jugador:0, catrin:0, ventas: mercader.ventas};
     for(let i=0; i<cartas.length; i++){
         aumVentas(Revision.ventas, cartas[i].nombre);
         Revision.jugador+= cartas[i].precio;
