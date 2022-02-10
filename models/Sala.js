@@ -22,6 +22,10 @@ const SalaSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    revisando: {
+        type: Boolean,
+        default: false
+    },
     inicio: {
         type: Boolean,
         default: false

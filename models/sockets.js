@@ -1,5 +1,5 @@
 const { crearJugador, jugadoresSala, regresarJugador, modCartas, iniciarPartida, guardarCartas, Declarar, cambiarCatrin, Vender, Sobornar, Bonificaciones} = require('../controllers/JugadorController');
-const {crearSala, aumentarVend, decVend, aumRonda} = require('../controllers/SalaController');
+const {crearSala, aumentarVend, decVend, aumRonda, regresarSala} = require('../controllers/SalaController');
 
 class Sockets {
 
@@ -22,9 +22,11 @@ class Sockets {
             socket.emit('Regresar-id', {salaId: salaID, jugadorId:jugadorID});
             //Enviar la lista de usuarios
             socket.on('solicitar-jugadores', async () => {         
-                const lista = await jugadoresSala(salaID);             
-                socket.to(sala).emit('lista-jugadores', lista);
-                socket.emit('lista-jugadores', lista);
+                const lista = await jugadoresSala(salaID);
+                const inicio = await regresarSala(salaID);
+                if(!inicio.inicio)
+                    socket.to(sala).emit('lista-jugadores', {lista: lista, inicio: false, master: false});
+                socket.emit('lista-jugadores', {lista: lista, inicio:inicio.inicio, master: true});
             });
             //Iniciar partida
             socket.on('iniciar-partida', async() =>{
@@ -37,10 +39,10 @@ class Sockets {
                 let aux = await jugadoresSala(salaID);
                 aux = aux.find(jugador => jugador.catrin);        
                 socket.emit('regresar-catrin', {nombre: aux.nombre, personaje: aux.personaje});
-            });
+            });            
             //Enviar info usuario
             socket.on('obtener-jugador', async (Id) =>{
-                const Jugadoraux= await regresarJugador(Id);
+                const Jugadoraux= await regresarJugador(Id);            
                 socket.emit('regresar-jugador', Jugadoraux);
             });
             //Cambiar cartas
@@ -123,6 +125,18 @@ class Sockets {
                     socket.to(sala).emit('siguiente-revision', num);
                 }
             });
+
+            //Checar fase del juego
+            socket.on('obtener-revision', async() => {
+                //Enviar jugadores a todos los usuarios              
+                const auxiliar = await regresarSala(salaID);            
+                if(auxiliar.revisando){                
+                    let arrAux = await jugadoresSala(salaID);
+                    arrAux = arrAux.filter(arr=>!arr.catrin);                    
+                    socket.emit('iniciar-juicio', {jugadores: arrAux, num: auxiliar.numVende});
+                }
+            });
+
 
             //Disconnect
             socket.on('disconnect', async() => {                

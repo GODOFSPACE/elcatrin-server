@@ -20,24 +20,31 @@ const crearSala = async(salaJugador) => {
     }
 }
 
+const regresarSala = async (Id) => {
+    return await Sala.findById(Id);
+}
+
 const aumentarVend = async(Id) => {
     let consulta = await Sala.findById(Id);
-    await Sala.findByIdAndUpdate(Id, {numVende: ++consulta.numVende});
-    if(consulta.numVende === consulta.jugadores-1)
+    if(++consulta.numVende === consulta.jugadores-1){
+        await Sala.findByIdAndUpdate(Id, {numVende: consulta.numVende, revisando: true});
         return true;
-    else
+    }
+    else{
+        await Sala.findByIdAndUpdate(Id, {numVende: consulta.numVende});
         return false;
+    }
 }
 
 const decVend = async(Id) => {
     let consulta = await Sala.findById(Id);
-    await Sala.findByIdAndUpdate(Id, {numVende: --consulta.numVende});
+    await Sala.findByIdAndUpdate(Id, {numVende:--consulta.numVende});
     return consulta.numVende;
 }
 
 const aumRonda = async(Id) => {
     let consulta = await Sala.findById(Id);
-    await Sala.findByIdAndUpdate(Id, {ronda: ++consulta.ronda});
+    await Sala.findByIdAndUpdate(Id, {ronda: ++consulta.ronda, revisando: false});
     if(consulta.ronda > consulta.jugadores)
         return -1;
     return consulta.ronda;
@@ -48,4 +55,5 @@ module.exports={
     aumentarVend,
     decVend,
     aumRonda,
+    regresarSala
 };
