@@ -49,11 +49,15 @@ const aumRonda = async(Id) => {
         return -1;
     return consulta.ronda;
 }
+const eliminarSala = async (Id)=>{
+    await Sala.findByIdAndDelete(Id);
+}
 
 module.exports={
     crearSala,
     aumentarVend,
     decVend,
     aumRonda,
-    regresarSala
+    regresarSala,
+    eliminarSala,
 };

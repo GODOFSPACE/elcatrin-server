@@ -39,8 +39,15 @@ const JugadorSchema = mongoose.Schema({
     catrin: {
         type: Boolean,
         default: false
-    }
-    
+    },
+    soborno: {
+        type: Object,
+        default: {soborno: 0, revisar: false}
+    },
+    vida: {
+        type: Date,
+        expires: 3600
+    } 
 });
 
 module.exports = mongoose.model('Jugador', JugadorSchema);

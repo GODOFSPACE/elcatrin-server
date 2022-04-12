@@ -1,5 +1,5 @@
-const { crearJugador, jugadoresSala, regresarJugador, modCartas, iniciarPartida, guardarCartas, Declarar, cambiarCatrin, Vender, Sobornar, Bonificaciones} = require('../controllers/JugadorController');
-const {crearSala, aumentarVend, decVend, aumRonda, regresarSala} = require('../controllers/SalaController');
+const { crearJugador, jugadoresSala, regresarJugador, modCartas, iniciarPartida, guardarCartas, Declarar, guardarSoborno, cambiarCatrin, Vender, Sobornar, consultarSobornos, Bonificaciones, eliminarJugadores} = require('../controllers/JugadorController');
+const {crearSala, aumentarVend, decVend, aumRonda, regresarSala, eliminarSala} = require('../controllers/SalaController');
 
 class Sockets {
 
@@ -66,9 +66,16 @@ class Sockets {
                     socket.to(sala).emit('iniciar-juicio', {jugadores: arrAux, num: num});
                 }
             })
+            // //Mandar soborno ANTES DEL CAMBIOOOOO!!!!
+            // socket.on('mandar-soborno', (soborno) => {
+            //     socket.to(sala).emit('recibir-soborno', soborno);
+            // });
+
             //Mandar soborno
-            socket.on('mandar-soborno', (soborno) => {
-                socket.to(sala).emit('recibir-soborno', soborno);
+            socket.on('mandar-soborno', async (soborno) => {
+                await guardarSoborno(soborno.soborno, soborno.revisar, soborno.id)
+                const sobornos = await consultarSobornos(soborno.sala);                
+                socket.to(sala).emit('recibir-soborno', sobornos);
             });
 
             //Revisar jugadores
@@ -96,7 +103,7 @@ class Sockets {
             //Saltar soborno
             socket.on('saltar-soborno', async({catrinID, dineroCatrin, mercader, soborno}) => {               
                 await Vender(catrinID, dineroCatrin, mercader, false);
-                await Sobornar(catrinID, soborno);
+                await Sobornar(catrinID, soborno, mercader.sala);
                 socket.to(sala).emit('saltar-fase');
                 socket.emit('saltar-fase');
             });
@@ -136,6 +143,11 @@ class Sockets {
                     socket.emit('iniciar-juicio', {jugadores: arrAux, num: auxiliar.numVende});
                 }
             });
+            //eliminarDatos
+            socket.on('borrar-datos', async({salaId, jugadorId})=>{
+                await eliminarJugadores(salaId);
+                await eliminarSala(salaId);
+            })
 
 
             //Disconnect

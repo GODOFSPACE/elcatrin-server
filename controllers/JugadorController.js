@@ -71,6 +71,12 @@ const Declarar = async(articulo, Id)=>{
     const actualizar = {declarar: articulo};
     await Jugador.findByIdAndUpdate(Id, actualizar, {new:true});
 }
+const guardarSoborno = async (dinero, revisar, Id) => {
+    await Jugador.findByIdAndUpdate(Id, {soborno: {soborno: dinero, revisar: revisar}});
+}
+const consultarSobornos = async (Id) => {
+    return await Jugador.find({sala: Id}).select('nombre personaje soborno').sort({creado: -1});
+}
 const cambiarCatrin = async(num, Id) => {
     await Jugador.findOneAndUpdate({sala: Id, num: num-1}, {catrin: false});
     return await Jugador.findOneAndUpdate({sala: Id, num: num}, {catrin: true}, {new: true});
@@ -85,12 +91,14 @@ const Vender = async(IdCatrin, dineroCatrin, mercader, revisar) => {
         await Jugador.findByIdAndUpdate(IdCatrin, {dinero: dineroCatrin+aux.catrin});
     await Jugador.findByIdAndUpdate(mercader._id, {dinero: mercader.dinero+aux.jugador,cartas: mercader.cartas, ventas: aux.ventas});
 }
-const Sobornar = async(IdCatrin, soborno ) => {
-    const {id} = soborno;
+const Sobornar = async(IdCatrin, soborno, salaId ) => {
+    const {_id} = soborno;
     let auxA = await Jugador.findById(IdCatrin);
-    let auxB = await Jugador.findById(id);
-    await Jugador.findByIdAndUpdate(IdCatrin, {dinero: auxA.dinero+soborno.soborno});
-    await Jugador.findByIdAndUpdate(id, {dinero: auxB.dinero-soborno.soborno});
+    let auxB = await Jugador.findById(_id);
+    await Jugador.findByIdAndUpdate(IdCatrin, {dinero: auxA.dinero+soborno.soborno.soborno});
+    await Jugador.findByIdAndUpdate(_id, {dinero: auxB.dinero-soborno.soborno.soborno});
+    await Jugador.updateMany({sala: salaId}, {soborno: {soborno: 0, revisar: false}});
+
 }
 const Bonificaciones = async(jugadores) => {
     let maxPan = jugadores[0].ventas.pan;
@@ -128,6 +136,11 @@ const Bonificaciones = async(jugadores) => {
     const Posiciones = jugadores.sort((a,b)=>a.dinero-b.dinero).reverse();
     return Ganadores = {panadero: Panadero, tamalero: Tamalero, aguacatero: Aguacatero, chapo: Chapo, pinatero: Pinatero, posiciones: Posiciones}
 }
+
+const eliminarJugadores = async(Id) => {
+    await Jugador.deleteMany({sala: Id});
+}
+
 module.exports={
     crearJugador,
     jugadoresSala,
@@ -137,8 +150,11 @@ module.exports={
     modCartas,
     guardarCartas,
     Declarar,
+    guardarSoborno,
+    consultarSobornos,
     cambiarCatrin,
     Vender,
     Sobornar,
-    Bonificaciones
+    Bonificaciones,
+    eliminarJugadores
 };

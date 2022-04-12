@@ -25,10 +25,14 @@ const SalaSchema = mongoose.Schema({
     revisando: {
         type: Boolean,
         default: false
-    },
+    },   
     inicio: {
         type: Boolean,
         default: false
+    },
+    vida: {
+        type: Date,
+        expires: 3600
     }
 });
 
