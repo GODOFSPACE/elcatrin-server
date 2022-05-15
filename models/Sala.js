@@ -32,7 +32,8 @@ const SalaSchema = mongoose.Schema({
     },
     vida: {
         type: Date,
-        expires: 3600
+        default: Date.now,
+        expires: 5400
     }
 });
 

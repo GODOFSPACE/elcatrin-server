@@ -15,11 +15,7 @@ const JugadorSchema = mongoose.Schema({
     cartas:{
         type: Array,
         required: true,
-    },
-    declarar:{
-        type: String,
-        default: ''
-    },
+    },   
     ventas:{
         type: Object,
         default: {pan: 0, tamal: 0, aguacate: 0, pinata: 0, ilegal: 0}
@@ -46,7 +42,8 @@ const JugadorSchema = mongoose.Schema({
     },
     vida: {
         type: Date,
-        expires: 3600
+        default: Date.now,
+        expires: 5400
     } 
 });
 

@@ -96,9 +96,10 @@ const Sobornar = async(IdCatrin, soborno, salaId ) => {
     let auxA = await Jugador.findById(IdCatrin);
     let auxB = await Jugador.findById(_id);
     await Jugador.findByIdAndUpdate(IdCatrin, {dinero: auxA.dinero+soborno.soborno.soborno});
-    await Jugador.findByIdAndUpdate(_id, {dinero: auxB.dinero-soborno.soborno.soborno});
+    await Jugador.findByIdAndUpdate(_id, {dinero: auxB.dinero-soborno.soborno.soborno});    
+}
+const ReiniciarSobornos = async(salaId) => {
     await Jugador.updateMany({sala: salaId}, {soborno: {soborno: 0, revisar: false}});
-
 }
 const Bonificaciones = async(jugadores) => {
     let maxPan = jugadores[0].ventas.pan;
@@ -155,6 +156,7 @@ module.exports={
     cambiarCatrin,
     Vender,
     Sobornar,
+    ReiniciarSobornos,
     Bonificaciones,
     eliminarJugadores
 };

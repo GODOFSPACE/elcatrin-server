@@ -1,15 +1,15 @@
 const WeightedList = require('js-weighted-list');
 const CartaAleatoria=(cantidad)=>{
     let mazo = [
-        { key: 'Pan', weight: 48, 'data':{nombre: 'pan', precio: 2, legal: true, selector: false} },
-        { key: 'Tamal', weight: 36, 'data':{nombre: 'tamal', precio: 3, legal: true, selector: false} },
-        { key: 'Aguacate', weight: 36, 'data':{nombre: 'aguacate', precio: 3, legal: true, selector: false} },
-        { key: 'Pinata', weight: 24, 'data':{nombre: 'pinata', precio: 4, legal: true, selector: false} },
+        { key: 'Pan', weight: 40, 'data':{nombre: 'pan', precio: 2, legal: true, selector: false} },
+        { key: 'Tamal', weight: 28, 'data':{nombre: 'tamal', precio: 3, legal: true, selector: false} },
+        { key: 'Aguacate', weight: 28, 'data':{nombre: 'aguacate', precio: 3, legal: true, selector: false} },
+        { key: 'Pinata', weight: 26, 'data':{nombre: 'pinata', precio: 4, legal: true, selector: false} },
 
-        { key: 'Tequila', weight: 22, 'data':{nombre: 'tequila', precio: 6, legal: false, selector: false} },
-        { key: 'Axolote', weight: 18, 'data':{nombre: 'axolote', precio: 7, legal: false, selector: false} },
-        { key: 'Petardos', weight: 12, 'data':{nombre: 'petardos', precio: 8, legal: false, selector: false} },
-        { key: 'Machete', weight: 5, 'data':{nombre: 'machete', precio: 9, legal: false, selector: false} },
+        { key: 'Tequila', weight: 30, 'data':{nombre: 'tequila', precio: 12, legal: false, selector: false} },
+        { key: 'Axolote', weight: 26, 'data':{nombre: 'axolote', precio: 14, legal: false, selector: false} },
+        { key: 'Petardos', weight: 18, 'data':{nombre: 'petardos', precio: 16, legal: false, selector: false} },
+        { key: 'Machete', weight: 12, 'data':{nombre: 'machete', precio: 18, legal: false, selector: false} },
     ]
     let cartas = [];
     const selector = new WeightedList(mazo);
@@ -33,24 +33,18 @@ const RevisarMerc=(mercader)=>{
             Ilegal=true;
     }
     if(Ilegal){ 
-        for(let i=0; i<cartas.length; i++){
-            if(cartas[i].nombre===mercader.declarar){
-                aumVentas(Revision.ventas, cartas[i].nombre);
-                Revision.jugador+= cartas[i].precio;
-            }
+        for(let i=0; i<cartas.length; i++){            
             if(!cartas[i].legal){
-                Revision.jugador-=4;
-                Revision.catrin+=4;
+                Revision.jugador-=6;
+                Revision.catrin+=6;
             }
         }
     }
     else{ 
-        for(let i=0; i<cartas.length; i++){
-            if(cartas[i].nombre===mercader.declarar){
-                aumVentas(Revision.ventas, cartas[i].nombre);
-                Revision.jugador+=cartas[i].precio+2;
-                Revision.catrin-=2;
-            }
+        for(let i=0; i<cartas.length; i++){            
+            aumVentas(Revision.ventas, cartas[i].nombre);
+            Revision.jugador+=cartas[i].precio+2;
+            Revision.catrin-=2;            
         }
     }    
     return Revision;

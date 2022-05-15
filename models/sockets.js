@@ -1,4 +1,4 @@
-const { crearJugador, jugadoresSala, regresarJugador, modCartas, iniciarPartida, guardarCartas, Declarar, guardarSoborno, cambiarCatrin, Vender, Sobornar, consultarSobornos, Bonificaciones, eliminarJugadores} = require('../controllers/JugadorController');
+const { crearJugador, jugadoresSala, regresarJugador, modCartas, iniciarPartida, guardarCartas, guardarSoborno, cambiarCatrin, Vender, Sobornar, ReiniciarSobornos, consultarSobornos, Bonificaciones, eliminarJugadores} = require('../controllers/JugadorController');
 const {crearSala, aumentarVend, decVend, aumRonda, regresarSala, eliminarSala} = require('../controllers/SalaController');
 
 class Sockets {
@@ -52,11 +52,7 @@ class Sockets {
             });
             //Vender cartas
             socket.on('vender-cartas', async ({cartas, Id}) => {     
-                await guardarCartas(cartas, Id);             
-            });
-            //Declaracion
-            socket.on('declarar-cartas', async ({articulo, Id}) => {              
-                await Declarar(articulo, Id);
+                await guardarCartas(cartas, Id);
                 if(await aumentarVend(salaID)){
                     //Enviar jugadores a todos los usuarios
                     const num = await decVend(salaID);
@@ -64,8 +60,8 @@ class Sockets {
                     arrAux = arrAux.filter(arr=>!arr.catrin);                    
                     socket.emit('iniciar-juicio', {jugadores: arrAux, num: num});
                     socket.to(sala).emit('iniciar-juicio', {jugadores: arrAux, num: num});
-                }
-            })
+                }            
+            });            
             // //Mandar soborno ANTES DEL CAMBIOOOOO!!!!
             // socket.on('mandar-soborno', (soborno) => {
             //     socket.to(sala).emit('recibir-soborno', soborno);
@@ -109,9 +105,9 @@ class Sockets {
             });
 
             //Continuar Revision
-            socket.on('continuar-revision', async(revision) => {
+            socket.on('continuar-revision', async(revision) => { //TODO: REINICIAR SOBORNOS
                 //Verifica si ya se completo la revision
-                if(revision <= 0){                    
+                if(revision <= 0){  
                     const num = await aumRonda(salaID);    
                     if(num === -1){
                         const jugadores = await jugadoresSala(salaID);
@@ -120,6 +116,7 @@ class Sockets {
                         socket.to(sala).emit('fin-juego', bonificaciones);
                     } 
                     else{                                             
+                        ReiniciarSobornos(salaID);                  
                         const info = await cambiarCatrin(num, salaID);
                         socket.emit('regresar-catrin', {nombre: info.nombre, personaje: info.personaje});
                         socket.to(sala).emit('regresar-catrin', {nombre: info.nombre, personaje: info.personaje});
@@ -127,7 +124,8 @@ class Sockets {
                     
                 }
                 else{
-                    const num = await decVend(salaID);    
+                    ReiniciarSobornos(salaID);
+                    const num = await decVend(salaID);   
                     socket.emit('siguiente-revision', num);
                     socket.to(sala).emit('siguiente-revision', num);
                 }
